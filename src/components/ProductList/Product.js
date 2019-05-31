@@ -1,12 +1,42 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const ProductWrapper = styled.div`
+const Wrapper = styled.div`
+  position: relative;
+  display: grid;
+  grid-template-columns: 90px auto 90px;
+  cursor: pointer;
+
+  &:hover {
+    :before {
+      content: '';
+      background: rgba(0,0,0,0.75);
+      position: absolute;
+      right: 0;
+      width: 10px;
+      height: 100%;
+    }
+  }
+
+  h3 {
+    font-size: 1em;
+    font-weight: normal;
+  }
+`
+
+const Price = styled.div`
+  display: flex;
+  justify-content: center;
+  font-family: 'Montserrat';
+  font-size: 1.3rem;
+`
+
+const Image = styled.div`
   display: flex;
 `
 
 export default class Product extends React.PureComponent {
-  render () {
+  render() {
     const {
       id,
       site_id,
@@ -37,11 +67,15 @@ export default class Product extends React.PureComponent {
     } = this.props
 
     return (
-      <ProductWrapper>
-        <img src={thumbnail} />
+      <Wrapper>
+        <Image>
+          <img src={thumbnail} />
+        </Image>
         <h3>{title}</h3>
-        <p>AR$ {price}</p>
-      </ProductWrapper>
+        <Price>
+          <p>${price}</p>
+        </Price>
+      </Wrapper>
     )
   }
 }
