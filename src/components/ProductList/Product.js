@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   }
 
   h3 {
-    font-size: 1em;
+    font-size: 1.2em;
     font-weight: normal;
   }
 `
