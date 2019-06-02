@@ -15,9 +15,11 @@ const Wrapper = styled.div`
 
 export default class Header extends React.PureComponent {
   render() {
+    const { sellerId } = this.props
+
     return (
       <Wrapper>
-        <Seller />
+        <Seller id={sellerId} />
       </Wrapper>
     )
   }

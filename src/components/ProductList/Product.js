@@ -1,16 +1,18 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const Wrapper = styled.div`
+const Wrapper = styled.a`
   position: relative;
   display: grid;
   grid-template-columns: 90px auto 90px;
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 
   &:hover {
     :before {
       content: '';
-      background: rgba(0,0,0,0.75);
+      background: rgba(0, 0, 0, 0.75);
       position: absolute;
       right: 0;
       width: 10px;
@@ -67,7 +69,7 @@ export default class Product extends React.PureComponent {
     } = this.props
 
     return (
-      <Wrapper>
+      <Wrapper href={permalink} target="_blank">
         <Image>
           <img src={thumbnail} />
         </Image>

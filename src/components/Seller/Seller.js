@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { getSeller } from 'services/meli-api'
 
 const Wrapper = styled.div`
-    display: flex;
+  display: flex;
 `
 
 export default class Seller extends React.PureComponent {
@@ -12,7 +12,8 @@ export default class Seller extends React.PureComponent {
   }
 
   componentDidMount() {
-    getSeller().then(seller => {
+    const { id } = this.props
+    getSeller(id).then(seller => {
       this.setState({ seller })
     })
   }
@@ -20,10 +21,6 @@ export default class Seller extends React.PureComponent {
   render() {
     const { seller } = this.state
 
-    return (
-      <Wrapper>
-        {seller.nickname}
-      </Wrapper>
-    )
+    return <Wrapper>{seller.nickname}</Wrapper>
   }
 }

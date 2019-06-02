@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroller'
+import ReactLoading from 'react-loading'
 import Product from './Product'
 import { getProducts } from 'services/meli-api'
 
@@ -18,6 +19,11 @@ const List = styled.div`
   background: white;
 `
 
+const Loading = styled(ReactLoading)`
+  margin: auto;
+  padding-bottom: 15px;
+`
+
 export default class ProductsList extends React.PureComponent {
   state = {
     data: {
@@ -29,9 +35,10 @@ export default class ProductsList extends React.PureComponent {
     this.loadProducts()
   }
 
-  loadProducts = (offset) => {
-    console.log('-- load products', offset)
-    getProducts(offset).then(data => {
+  loadProducts = offset => {
+    const { sellerId } = this.props
+    console.log(`-- load products for '${sellerId}', offset '${offset}'`)
+    getProducts(sellerId, offset).then(data => {
       // Load more, append new products.
       if (offset) {
         this.setState({
@@ -66,7 +73,7 @@ export default class ProductsList extends React.PureComponent {
     if (!paging) return false
 
     const { total, offset, limit } = paging
-    return (offset + limit < total)
+    return offset + limit < total
   }
 
   render() {
@@ -78,11 +85,11 @@ export default class ProductsList extends React.PureComponent {
           <InfiniteScroll
             pageStart={0}
             loadMore={this.loadMoreProducts}
-            hasMore={this.hasMoreProducts}
-            loader={<div className="loader" key={0}>Loading Products...</div>}
+            hasMore={this.hasMoreProducts()}
+            loader={<Loading key="loader" type="spin" color="black" />}
           >
             {results.map(product => (
-              <Product {...product} />
+              <Product key={product.id} {...product} />
             ))}
           </InfiniteScroll>
         </List>
