@@ -2,8 +2,12 @@ import React from 'react'
 import styled from 'styled-components'
 import { getSeller } from 'services/meli-api'
 
-const Wrapper = styled.div`
-  display: flex;
+const Wrapper = styled.a`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  color: black;
 `
 
 export default class Seller extends React.PureComponent {
@@ -20,7 +24,13 @@ export default class Seller extends React.PureComponent {
 
   render() {
     const { seller } = this.state
+    const { id } = this.props
+    const url = `/${id}`
 
-    return <Wrapper>{seller.nickname}</Wrapper>
+    return (
+      <Wrapper title={seller.nickname} href={url}>
+        {seller.nickname}
+      </Wrapper>
+    )
   }
 }

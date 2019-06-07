@@ -3,10 +3,14 @@ import styled from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroller'
 import ReactLoading from 'react-loading'
 import Product from './Product'
+import SearchStatus from './SearchStatus'
 import { getProducts } from 'services/meli-api'
+import { withContext } from 'state/Context'
+import { isValidQuery } from 'utils'
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   background: #eee;
 `
@@ -17,6 +21,7 @@ const List = styled.div`
   width: 100%;
   max-width: 800px;
   background: white;
+  padding-top: 5px;
 `
 
 const Loading = styled(ReactLoading)`
@@ -24,52 +29,61 @@ const Loading = styled(ReactLoading)`
   padding-bottom: 15px;
 `
 
-export default class ProductsList extends React.PureComponent {
+export class ProductsList extends React.Component {
   state = {
     data: {
       results: []
-    }
+    },
+    query: ''
   }
 
   componentDidMount() {
     this.loadProducts()
   }
 
+  componentDidUpdate() {
+    console.log('ProductList UPDATED')
+  }
+
   loadProducts = offset => {
-    const { sellerId } = this.props
-    console.log(`-- load products for '${sellerId}', offset '${offset}'`)
-    getProducts(sellerId, offset).then(data => {
+    const { sellerId, context } = this.props
+    let { query } = context.search
+    query = query || this.props.query
+
+    // Reset query if not valid.
+    if (!isValidQuery(query)) query = ''
+
+    const { productsList } = context
+    getProducts({ sellerId, offset, query }).then(data => {
       // Load more, append new products.
       if (offset) {
-        this.setState({
-          data: {
-            ...this.state.data,
-            paging: data.paging,
-            results: this.state.data.results.concat(data.results)
-          }
+        context.setProductsData({
+          ...productsList,
+          paging: data.paging,
+          results: productsList.data.results.concat(data.results)
         })
         return
       }
 
       // First load.
-      this.setState({ data })
+      context.setProductsData(data)
     })
   }
 
   loadMoreProducts = () => {
-    console.log('LOAD MORE...')
-    const { paging } = this.state.data
+    const { context } = this.props
+    const { paging } = context.productsList.data
     if (!paging) return
     if (!this.hasMoreProducts()) return
 
     const { offset, limit } = paging
     const nextOffset = offset + limit
-    console.log('LOAD MORE, next offset:', nextOffset)
     this.loadProducts(nextOffset)
   }
 
   hasMoreProducts = () => {
-    const { paging } = this.state.data
+    const { context } = this.props
+    const { paging } = context.productsList.data
     if (!paging) return false
 
     const { total, offset, limit } = paging
@@ -77,10 +91,14 @@ export default class ProductsList extends React.PureComponent {
   }
 
   render() {
-    const { results } = this.state.data
+    const { context } = this.props
+    let { query } = context.search
+    query = query || this.props.query
+    const { results, paging } = context.productsList.data
 
     return (
       <Wrapper>
+        <SearchStatus query={query} paging={paging} />
         <List>
           <InfiniteScroll
             pageStart={0}
@@ -97,3 +115,5 @@ export default class ProductsList extends React.PureComponent {
     )
   }
 }
+
+export default withContext(ProductsList)
