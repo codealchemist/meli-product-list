@@ -4,12 +4,12 @@ import Header from 'components/Header'
 
 export default class SellerPage extends React.PureComponent {
   render() {
-    const { sellerId } = this.props.match.params
+    const { sellerId, query } = this.props.match.params
 
     return (
       <>
         <Header sellerId={sellerId} />
-        <ProductList sellerId={sellerId} />
+        <ProductList sellerId={sellerId} query={query} />
       </>
     )
   }
