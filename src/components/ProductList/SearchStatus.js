@@ -4,6 +4,8 @@ import { isValidQuery } from 'utils'
 
 const Wrapper = styled.div`
   padding: 5px;
+  width: 100%;
+  max-width: 800px;
 `
 
 export default class SearchStatus extends React.PureComponent {
